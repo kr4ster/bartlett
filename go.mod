@@ -1,4 +1,4 @@
-module github.com/royallthefourth/bartlett
+module github.com/kr4ster/bartlett
 
 go 1.17
 

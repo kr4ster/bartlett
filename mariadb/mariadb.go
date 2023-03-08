@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/royallthefourth/bartlett"
+	"github.com/kr4ster/bartlett"
 	"log"
 	"net/http"
 	"reflect"

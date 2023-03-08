@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	sqrl "github.com/Masterminds/squirrel"
-	"github.com/royallthefourth/bartlett"
+	"github.com/kr4ster/bartlett"
 	"log"
 	"net/http"
 	"reflect"

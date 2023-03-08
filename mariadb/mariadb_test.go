@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/royallthefourth/bartlett"
+	"github.com/kr4ster/bartlett"
 	"net/http"
 	"net/http/httptest"
 	"strings"

@@ -3,8 +3,8 @@ package sqlite3
 import (
 	"database/sql"
 	"encoding/json"
+	"github.com/kr4ster/bartlett"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/royallthefourth/bartlett"
 	"net/http"
 	"net/http/httptest"
 	"strings"

@@ -1,11 +1,11 @@
 # Bartlett
 
-[![GoDoc](https://godoc.org/github.com/royallthefourth/bartlett?status.svg)](https://godoc.org/github.com/royallthefourth/bartlett)
-[![Go Report Card](https://goreportcard.com/badge/github.com/royallthefourth/bartlett)](https://goreportcard.com/report/github.com/royallthefourth/bartlett)
-[![CircleCI](https://circleci.com/gh/royallthefourth/bartlett.svg?style=svg)](https://circleci.com/gh/royallthefourth/bartlett)
-[![codecov](https://codecov.io/gh/royallthefourth/bartlett/branch/master/graph/badge.svg)](https://codecov.io/gh/royallthefourth/bartlett)
+[![GoDoc](https://godoc.org/github.com/kr4ster/bartlett?status.svg)](https://godoc.org/github.com/kr4ster/bartlett)
+[![Go Report Card](https://goreportcard.com/badge/github.com/kr4ster/bartlett)](https://goreportcard.com/report/github.com/kr4ster/bartlett)
+[![CircleCI](https://circleci.com/gh/kr4ster/bartlett.svg?style=svg)](https://circleci.com/gh/kr4ster/bartlett)
+[![codecov](https://codecov.io/gh/kr4ster/bartlett/branch/master/graph/badge.svg)](https://codecov.io/gh/kr4ster/bartlett)
 
-*Bartlett* is a library that automatically generates a CRUD API for your Go web application.
+_Bartlett_ is a library that automatically generates a CRUD API for your Go web application.
 
 ## Usage
 
@@ -23,8 +23,8 @@ import (
     "log"
     "net/http"
     _ "github.com/go-sql-driver/mysql"
-    "github.com/royallthefourth/bartlett"
-    "github.com/royallthefourth/bartlett/mariadb"
+    "github.com/kr4ster/bartlett"
+    "github.com/kr4ster/bartlett/mariadb"
 )
 
 func indexPage(w http.ResponseWriter, r *http.Request) {
@@ -32,12 +32,12 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func dummyUserProvider(_ *http.Request) (interface{}, error) {
-    return 0, nil // In a real application, use a closure that includes your session handler to generate a user ID. 
+    return 0, nil // In a real application, use a closure that includes your session handler to generate a user ID.
 }
 
 func main() {
     http.HandleFunc(`/`, indexPage)
-    
+
     // The students table will be available from the API, but the rest of the database will not.
     tables := []bartlett.Table{
     	{
@@ -49,7 +49,7 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    
+
     // Bartlett is not a web application.
     // Instead, it is a tool that allows you to quickly add an API to your existing application.
     b := bartlett.Bartlett{DB: db, Driver: &mariadb.MariaDB{}, Tables: tables, Users: dummyUserProvider}
@@ -57,12 +57,12 @@ func main() {
     for _, route := range routes {
     	http.HandleFunc(`/api` + route.Path, route.Handler) // Adds /api/students to the server.
     }
-    
+
     log.Fatal(http.ListenAndServe(`:8080`, nil))
 }
 ```
 
-See the [todo list demo application](https://github.com/royallthefourth/bartlett-todo) for a bigger example.
+See the [todo list demo application](https://github.com/kr4ster/bartlett-todo) for a bigger example.
 
 ### Choosing Tables
 
@@ -86,20 +86,22 @@ This should almost always be set to `false`!
 To `SELECT` from a table, make a `GET` request to its corresponding URL.
 For example, `SELECT * FROM students;` against the example above may be achieved by `curl -XGET http://localhost:8080/students`
 The result set will be emitted as a JSON array:
+
 ```json
 [
-    {
-        "student_id": 1,
-        "age": 18,
-        "grade": 85
-    },
-    {
-        "student_id": 2,
-        "age": 20,
-        "grade": 91
-    }
+  {
+    "student_id": 1,
+    "age": 18,
+    "grade": 85
+  },
+  {
+    "student_id": 2,
+    "age": 20,
+    "grade": 91
+  }
 ]
 ```
+
 Note that all results are emitted as an array, even if there is only one row.
 
 Requests may filter columns by the `select=` query parameter, eg `/students?select=student_id,grade`
@@ -109,17 +111,17 @@ Requests may filter columns by the `select=` query parameter, eg `/students?sele
 To filter on simple `WHERE` conditions, specify a column name as a query string parameter and the conditions as the value.
 For example: `/students?age=eq.20` produces `WHERE age = 20`.
 
-| Operator  | SQL       | Note                      |
-| --------- | --------- | ------------------------- |
-|   `eq`    |   `=`     |                           |
-|   `neq`   |   `!=`    |                           |
-|   `gt`    |   `>`     |                           |
-|   `gte`   |   `>=`    |                           |
-|   `lt`    |   `<`     |                           |
-|   `lte`   |   `<=`    |                           |
-|   `like`  |   `LIKE`  | use `*` in place of `%`   |
-|   `is`    |   `IS`    | eg `is.true` or `is.null` |
-|   `in`    |   `IN`    | eg `in."hi, there","bye"` |
+| Operator | SQL    | Note                      |
+| -------- | ------ | ------------------------- |
+| `eq`     | `=`    |                           |
+| `neq`    | `!=`   |                           |
+| `gt`     | `>`    |                           |
+| `gte`    | `>=`   |                           |
+| `lt`     | `<`    |                           |
+| `lte`    | `<=`   |                           |
+| `like`   | `LIKE` | use `*` in place of `%`   |
+| `is`     | `IS`   | eg `is.true` or `is.null` |
+| `in`     | `IN`   | eg `in."hi, there","bye"` |
 
 Any of these conditions can be negated by prefixing it with `not.` eg `/students?age=not.eq.20`
 
@@ -144,7 +146,6 @@ Your request payload may come in the form of a JSON array of rows to insert _or_
 
 Inserts return an object containing an array of error messages and the IDs of all successful inserts.
 
-
 To generate your own surrogate key for each row, identify in your `Table` struct an `IDColumn`.
 Provide a function that returns a new ID each time it's invoked.
 This column will be protected from tampering by users. The `UserID` column is also filtered out incoming `POST` requests.
@@ -156,6 +157,7 @@ Set your `WHERE` params on the URL exactly the way you do with a `SELECT`.
 Any `PATCH` requests that do not have a `WHERE` will be rejected for your safety.
 
 `PATCH` requests must include a JSON payload body with the fields to be updated and their values:
+
 ```json
 {
   "age": 71,
@@ -169,7 +171,7 @@ To delete rows from a table, make a `DELETE` request to the corresponding table'
 
 You _must_ specify at least one `WHERE` clause, otherwise the request will return an error.
 This is a design feature to prevent users from deleting everything by mistake.
- 
+
 ## Status
 
 This project is under heavy development.
